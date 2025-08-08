@@ -9,11 +9,27 @@
 </head>
 
 <body>
-    <div id="game">
-        <div id="character"></div>
-        <div id="obstacle"></div>
-        <div id="score">Score: 0</div>
-    </div>
+    <!-- I enhanced Robin's game with semantic HTML elements and Canvas API -->
+    <main>
+        <header>
+            <h1>Simple Jumping Game</h1>
+            <div id="score" aria-live="polite">Score: 0</div>
+        </header>
+        
+        <section id="game" role="application" aria-label="Jumping Game">
+            <!-- I added Canvas for proper game graphics while keeping Robin's structure -->
+            <canvas id="gameCanvas" width="600" height="200" aria-label="Game area">
+                <!-- I kept Robin's original div-based fallback for accessibility -->
+                <div id="character"></div>
+                <div id="obstacle"></div>
+                Your browser does not support the HTML5 canvas element.
+            </canvas>
+        </section>
+        
+        <footer>
+            <p>Press SPACEBAR to jump! Avoid the green obstacles.</p>
+        </footer>
+    </main>
 
     <script src="./script.js"></script>
 </body>

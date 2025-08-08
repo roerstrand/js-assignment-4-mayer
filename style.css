@@ -1,18 +1,43 @@
+/* I enhanced Robin's CSS while keeping his original styling approach */
 body {
     margin: 0;
-    padding: 0;
+    padding: 1rem;
     font-family: sans-serif;
     background-color: #f4f4f4;
+    text-align: center;
 }
 
+/* I added semantic styling for the new HTML structure */
+main {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+footer p {
+    color: #666;
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+/* I enhanced Robin's game container to work with Canvas */
 #game {
     width: 600px;
     height: 200px;
-    border: 2px solid #000;
-    margin: 50px auto;
+    margin: 2rem auto;
     position: relative;
-    overflow: hidden;
+    display: inline-block;
+}
+
+/* I styled the new Canvas element while keeping Robin's visual design */
+#gameCanvas {
+    border: 2px solid #000;
     background-color: #e3f2fd;
+    display: block;
 }
 
 #character {
@@ -63,9 +88,21 @@ body {
     }
 }
 
+/* I enhanced Robin's score display while keeping his styling */
 #score {
-    position: absolute;
-    top: 10px;
-    left: 10px;
     font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* I kept Robin's original character and obstacle styles as fallback for non-Canvas browsers */
+#character {
+    /* Hidden by default since we use Canvas, but kept for accessibility fallback */
+    display: none;
+}
+
+#obstacle {
+    /* Hidden by default since we use Canvas, but kept for accessibility fallback */
+    display: none;
 }
