@@ -24,16 +24,21 @@ function jump() {
 let checkCollision = setInterval(() => {
     if (!gameRunning) return;
 
-    const obstacleLeft = parseInt(window.getComputedStyle(obstacle).getPropertyValue("right"));
+    const characterBottomFromBottom = parseInt(
+        window.getComputedStyle(character).getPropertyValue("bottom")
+    );
 
-    const characterBottom = parseInt(window.getComputedStyle(character).getPropertyValue("bottom"));
-    const obstacleRight = 600 - obstacleLeft;
-    const obstacleLeftEdge = obstacleRight - 30;
+    const obstacleRightEdgeFromRight = parseInt(
+        window.getComputedStyle(obstacle).getPropertyValue("right")
+    );
+
+    const obstacleRightEdgeFromLeft = 600 - obstacleRightEdgeFromRight;
+    const obstacleLeftEdgeFromLeft = obstacleRightEdgeFromLeft - 30;
 
     const collision =
-        obstacleLeftEdge < 90 &&
-        obstacleRight > 50 &&
-        characterBottom < 40;
+        obstacleLeftEdgeFromLeft < 90 &&
+        obstacleRightEdgeFromLeft > 50 &&
+        characterBottomFromBottom < 40;
 
     if (collision) {
         alert("Game Over! Your score: " + score);
