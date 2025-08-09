@@ -24,7 +24,6 @@ function jump() {
 let checkCollision = setInterval(() => {
     if (!gameRunning) return;
 
-    const characterTop = parseInt(window.getComputedStyle(character).getPropertyValue("top"));
     const obstacleLeft = parseInt(window.getComputedStyle(obstacle).getPropertyValue("right"));
 
     const characterBottom = parseInt(window.getComputedStyle(character).getPropertyValue("bottom"));
