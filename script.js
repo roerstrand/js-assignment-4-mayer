@@ -34,7 +34,7 @@ let gameStats = {
 const themes = {
     forest: {
         name: "🌲 Forest Adventure",
-        background: { 
+        background: {
             primary: "linear-gradient(180deg, #87CEEB 0%, #98FB98 50%, #228B22 100%)",
             ground: "#8B4513"
         },
@@ -55,7 +55,7 @@ const themes = {
     },
     ocean: {
         name: "🌊 Ocean Quest",
-        background: { 
+        background: {
             primary: "linear-gradient(180deg, #87CEEB 0%, #4682B4 50%, #191970 100%)",
             ground: "#F4A460"
         },
@@ -76,7 +76,7 @@ const themes = {
     },
     space: {
         name: "🚀 Space Odyssey",
-        background: { 
+        background: {
             primary: "linear-gradient(180deg, #000000 0%, #191970 50%, #4B0082 100%)",
             ground: "#696969"
         },
@@ -100,21 +100,21 @@ const themes = {
 // 🎯 Game Configuration
 const CONFIG = {
     canvas: { width: 800, height: 400 },
-    character: { 
-        width: 50, 
-        height: 50, 
-        x: 100, 
-        jumpPower: -18, 
+    character: {
+        width: 50,
+        height: 50,
+        x: 100,
+        jumpPower: -18,
         maxJumps: 2
     },
-    physics: { 
-        gravity: 0.9, 
+    physics: {
+        gravity: 0.9,
         groundY: 320,
         terminalVelocity: 20
     },
-    game: { 
-        baseSpeed: 5, 
-        speedIncrement: 0.3, 
+    game: {
+        baseSpeed: 5,
+        speedIncrement: 0.3,
         obstacleSpawnRate: 100,
         powerUpChance: 0.015,
         maxObstacles: 5,  // Performance limit
@@ -172,7 +172,7 @@ function updateParticles() {
         particle.y += particle.velocityY;
         particle.velocityY += 0.3;
         particle.life--;
-        
+
         if (particle.life <= 0) {
             particles.splice(i, 1);
         }
@@ -185,7 +185,7 @@ function drawParticles() {
         ctx.save();
         ctx.globalAlpha = alpha;
         ctx.fillStyle = particle.color;
-        
+
         if (particle.type === 'star') {
             drawStar(particle.x, particle.y, particle.size);
         } else {
@@ -203,10 +203,10 @@ function drawStar(x, y, size) {
     ctx.translate(x, y);
     ctx.beginPath();
     for (let i = 0; i < 5; i++) {
-        ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * size, 
-                  Math.sin((18 + i * 72) * Math.PI / 180) * size);
-        ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * size * 0.5, 
-                  Math.sin((54 + i * 72) * Math.PI / 180) * size * 0.5);
+        ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * size,
+            Math.sin((18 + i * 72) * Math.PI / 180) * size);
+        ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * size * 0.5,
+            Math.sin((54 + i * 72) * Math.PI / 180) * size * 0.5);
     }
     ctx.closePath();
     ctx.fill();
@@ -217,22 +217,22 @@ function drawStar(x, y, size) {
 function drawCharacter() {
     const theme = themes[gameState.theme];
     const charTheme = theme.character;
-    
+
     ctx.save();
-    ctx.translate(character.x + character.width/2, character.y + character.height/2);
-    
+    ctx.translate(character.x + character.width / 2, character.y + character.height / 2);
+
     // Simplified rotation during jump
     if (character.isJumping) {
         ctx.rotate(character.rotation * 0.5); // Reduced rotation for performance
     }
-    
+
     // Reduced bounce animation
     if (!character.isJumping && gameState.frameCount % 4 === 0) {
         character.bounceOffset = Math.sin(gameState.frameCount * 0.2) * 2;
     }
-    
+
     ctx.translate(0, character.bounceOffset);
-    
+
     // Draw character based on theme
     if (gameState.theme === 'forest') {
         drawBunny(charTheme);
@@ -241,70 +241,70 @@ function drawCharacter() {
     } else if (gameState.theme === 'space') {
         drawAlien(charTheme);
     }
-    
+
     ctx.restore();
 }
 
 function drawBunny(theme) {
     const size = character.width;
-    
+
     // Ears
     ctx.fillStyle = theme.ears;
     ctx.beginPath();
-    ctx.ellipse(-size*0.2, -size*0.3, size*0.15, size*0.3, 0, 0, Math.PI * 2);
-    ctx.ellipse(size*0.2, -size*0.3, size*0.15, size*0.3, 0, 0, Math.PI * 2);
+    ctx.ellipse(-size * 0.2, -size * 0.3, size * 0.15, size * 0.3, 0, 0, Math.PI * 2);
+    ctx.ellipse(size * 0.2, -size * 0.3, size * 0.15, size * 0.3, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.ellipse(0, 0, size*0.3, size*0.35, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, size * 0.3, size * 0.35, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Eyes
     ctx.fillStyle = theme.eyes;
     ctx.beginPath();
-    ctx.ellipse(-size*0.1, -size*0.1, size*0.05, size*0.05, 0, 0, Math.PI * 2);
-    ctx.ellipse(size*0.1, -size*0.1, size*0.05, size*0.05, 0, 0, Math.PI * 2);
+    ctx.ellipse(-size * 0.1, -size * 0.1, size * 0.05, size * 0.05, 0, 0, Math.PI * 2);
+    ctx.ellipse(size * 0.1, -size * 0.1, size * 0.05, size * 0.05, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Nose
     ctx.fillStyle = theme.nose;
     ctx.beginPath();
-    ctx.ellipse(0, size*0.05, size*0.03, size*0.02, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, size * 0.05, size * 0.03, size * 0.02, 0, 0, Math.PI * 2);
     ctx.fill();
 }
 
 function drawFish(theme) {
     const size = character.width;
-    
+
     // Body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.ellipse(0, 0, size*0.3, size*0.2, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, size * 0.3, size * 0.2, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Tail
     ctx.fillStyle = theme.fins;
     ctx.beginPath();
-    ctx.moveTo(-size*0.3, 0);
-    ctx.lineTo(-size*0.5, -size*0.15);
-    ctx.lineTo(-size*0.5, size*0.15);
+    ctx.moveTo(-size * 0.3, 0);
+    ctx.lineTo(-size * 0.5, -size * 0.15);
+    ctx.lineTo(-size * 0.5, size * 0.15);
     ctx.closePath();
     ctx.fill();
-    
+
     // Fins
     ctx.beginPath();
-    ctx.ellipse(0, size*0.15, size*0.1, size*0.08, 0, 0, Math.PI * 2);
-    ctx.ellipse(0, -size*0.15, size*0.1, size*0.08, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, size * 0.15, size * 0.1, size * 0.08, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -size * 0.15, size * 0.1, size * 0.08, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Eyes
     ctx.fillStyle = theme.eyes;
     ctx.beginPath();
-    ctx.ellipse(size*0.05, -size*0.05, size*0.04, size*0.04, 0, 0, Math.PI * 2);
+    ctx.ellipse(size * 0.05, -size * 0.05, size * 0.04, size * 0.04, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Reduced bubble effects for performance
     if (Math.random() < 0.02) {
         particles.push(createParticle(character.x + character.width, character.y, theme.bubbles || '#87CEEB'));
@@ -313,56 +313,56 @@ function drawFish(theme) {
 
 function drawAlien(theme) {
     const size = character.width;
-    
+
     // Glow effect
     ctx.shadowColor = theme.glow;
     ctx.shadowBlur = 15;
-    
+
     // Body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.ellipse(0, 0, size*0.25, size*0.3, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, 0, size * 0.25, size * 0.3, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Head
     ctx.beginPath();
-    ctx.ellipse(0, -size*0.2, size*0.2, size*0.25, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -size * 0.2, size * 0.2, size * 0.25, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     ctx.shadowBlur = 0;
-    
+
     // Antenna
     ctx.strokeStyle = theme.antenna;
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(-size*0.1, -size*0.4);
-    ctx.lineTo(-size*0.1, -size*0.5);
-    ctx.moveTo(size*0.1, -size*0.4);
-    ctx.lineTo(size*0.1, -size*0.5);
+    ctx.moveTo(-size * 0.1, -size * 0.4);
+    ctx.lineTo(-size * 0.1, -size * 0.5);
+    ctx.moveTo(size * 0.1, -size * 0.4);
+    ctx.lineTo(size * 0.1, -size * 0.5);
     ctx.stroke();
-    
+
     // Antenna tips
     ctx.fillStyle = theme.antenna;
     ctx.beginPath();
-    ctx.ellipse(-size*0.1, -size*0.5, size*0.03, size*0.03, 0, 0, Math.PI * 2);
-    ctx.ellipse(size*0.1, -size*0.5, size*0.03, size*0.03, 0, 0, Math.PI * 2);
+    ctx.ellipse(-size * 0.1, -size * 0.5, size * 0.03, size * 0.03, 0, 0, Math.PI * 2);
+    ctx.ellipse(size * 0.1, -size * 0.5, size * 0.03, size * 0.03, 0, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Eyes
     ctx.fillStyle = theme.eyes;
     ctx.beginPath();
-    ctx.ellipse(-size*0.05, -size*0.15, size*0.06, size*0.08, 0, 0, Math.PI * 2);
-    ctx.ellipse(size*0.05, -size*0.15, size*0.06, size*0.08, 0, 0, Math.PI * 2);
+    ctx.ellipse(-size * 0.05, -size * 0.15, size * 0.06, size * 0.08, 0, 0, Math.PI * 2);
+    ctx.ellipse(size * 0.05, -size * 0.15, size * 0.06, size * 0.08, 0, 0, Math.PI * 2);
     ctx.fill();
 }
 
 // 🎨 Optimized Background Drawing
 function drawBackground() {
     const theme = themes[gameState.theme];
-    
+
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Simplified background based on theme
     if (gameState.theme === 'space') {
         // Space background
@@ -372,7 +372,7 @@ function drawBackground() {
         gradient.addColorStop(1, '#4B0082');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Simplified stars (fewer, no twinkling)
         ctx.fillStyle = '#FFFFFF';
         for (let i = 0; i < 20; i++) {
@@ -390,7 +390,7 @@ function drawBackground() {
         gradient.addColorStop(1, '#191970');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Simplified bubbles (fewer, static)
         ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
         for (let i = 0; i < 8; i++) {
@@ -409,11 +409,11 @@ function drawBackground() {
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     // Ground
     ctx.fillStyle = theme.background.ground;
     ctx.fillRect(0, CONFIG.physics.groundY, canvas.width, canvas.height - CONFIG.physics.groundY);
-    
+
     // Simplified ground pattern
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     for (let i = 0; i < canvas.width; i += 80) {
@@ -433,11 +433,11 @@ function drawCloud(x, y, size) {
 // 🚧 Enhanced Obstacle Drawing
 function drawObstacles() {
     const theme = themes[gameState.theme];
-    
+
     obstacles.forEach(obstacle => {
         ctx.save();
-        ctx.translate(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2);
-        
+        ctx.translate(obstacle.x + obstacle.width / 2, obstacle.y + obstacle.height / 2);
+
         if (gameState.theme === 'forest') {
             drawTreeStump(obstacle, theme.obstacles);
         } else if (gameState.theme === 'ocean') {
@@ -445,7 +445,7 @@ function drawObstacles() {
         } else if (gameState.theme === 'space') {
             drawMeteor(obstacle, theme.obstacles);
         }
-        
+
         ctx.restore();
     });
 }
@@ -453,43 +453,43 @@ function drawObstacles() {
 function drawTreeStump(obstacle, theme) {
     const w = obstacle.width;
     const h = obstacle.height;
-    
+
     // Stump body
     ctx.fillStyle = theme.body;
-    ctx.fillRect(-w/2, -h/2, w, h);
-    
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+
     // Tree rings
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.lineWidth = 2;
     for (let i = 1; i < 4; i++) {
         ctx.beginPath();
-        ctx.arc(0, -h/2 + 10, i * 8, 0, Math.PI * 2);
+        ctx.arc(0, -h / 2 + 10, i * 8, 0, Math.PI * 2);
         ctx.stroke();
     }
-    
+
     // Top foliage
     ctx.fillStyle = theme.top;
     ctx.beginPath();
-    ctx.arc(0, -h/2 - 10, w/3, 0, Math.PI * 2);
+    ctx.arc(0, -h / 2 - 10, w / 3, 0, Math.PI * 2);
     ctx.fill();
 }
 
 function drawCoral(obstacle, theme) {
     const w = obstacle.width;
     const h = obstacle.height;
-    
+
     // Coral base
     ctx.fillStyle = theme.body;
-    ctx.fillRect(-w/2, -h/2, w, h);
-    
+    ctx.fillRect(-w / 2, -h / 2, w, h);
+
     // Coral branches
     ctx.fillStyle = theme.top;
     ctx.strokeStyle = theme.top;
     ctx.lineWidth = 4;
     for (let i = 0; i < 3; i++) {
         ctx.beginPath();
-        ctx.moveTo(-w/4 + i * w/4, -h/2);
-        ctx.lineTo(-w/4 + i * w/4, -h/2 - 20 - Math.random() * 10);
+        ctx.moveTo(-w / 4 + i * w / 4, -h / 2);
+        ctx.lineTo(-w / 4 + i * w / 4, -h / 2 - 20 - Math.random() * 10);
         ctx.stroke();
     }
 }
@@ -497,19 +497,19 @@ function drawCoral(obstacle, theme) {
 function drawMeteor(obstacle, theme) {
     const w = obstacle.width;
     const h = obstacle.height;
-    
+
     // Glow effect
     ctx.shadowColor = theme.glow;
     ctx.shadowBlur = 20;
-    
+
     // Meteor body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.arc(0, 0, Math.min(w, h)/2, 0, Math.PI * 2);
+    ctx.arc(0, 0, Math.min(w, h) / 2, 0, Math.PI * 2);
     ctx.fill();
-    
+
     ctx.shadowBlur = 0;
-    
+
     // Crater details
     ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
     ctx.beginPath();
@@ -521,16 +521,16 @@ function drawMeteor(obstacle, theme) {
 // 🌟 Power-up Drawing
 function drawPowerUps() {
     const theme = themes[gameState.theme];
-    
+
     powerUps.forEach(powerUp => {
         ctx.save();
-        ctx.translate(powerUp.x + powerUp.width/2, powerUp.y + powerUp.height/2);
+        ctx.translate(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2);
         ctx.rotate(gameState.frameCount * 0.1);
-        
+
         // Glow effect
         ctx.shadowColor = '#FFD700';
         ctx.shadowBlur = 15;
-        
+
         if (gameState.theme === 'forest') {
             drawCarrot(powerUp, theme.powerUps);
         } else if (gameState.theme === 'ocean') {
@@ -538,65 +538,65 @@ function drawPowerUps() {
         } else if (gameState.theme === 'space') {
             drawGoldenStar(powerUp, theme.powerUps);
         }
-        
+
         ctx.restore();
     });
 }
 
 function drawCarrot(powerUp, theme) {
     const size = powerUp.width;
-    
+
     // Carrot body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.moveTo(0, size/3);
-    ctx.lineTo(-size/4, -size/4);
-    ctx.lineTo(size/4, -size/4);
+    ctx.moveTo(0, size / 3);
+    ctx.lineTo(-size / 4, -size / 4);
+    ctx.lineTo(size / 4, -size / 4);
     ctx.closePath();
     ctx.fill();
-    
+
     // Carrot top
     ctx.fillStyle = theme.leaf;
     ctx.beginPath();
-    ctx.ellipse(0, -size/3, size/6, size/4, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -size / 3, size / 6, size / 4, 0, 0, Math.PI * 2);
     ctx.fill();
 }
 
 function drawShell(powerUp, theme) {
     const size = powerUp.width;
-    
+
     // Shell body
     ctx.fillStyle = theme.body;
     ctx.beginPath();
-    ctx.arc(0, 0, size/3, 0, Math.PI * 2);
+    ctx.arc(0, 0, size / 3, 0, Math.PI * 2);
     ctx.fill();
-    
+
     // Shell ridges
     ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
     ctx.lineWidth = 2;
     for (let i = 0; i < 6; i++) {
         ctx.beginPath();
         ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(i * Math.PI / 3) * size/3, Math.sin(i * Math.PI / 3) * size/3);
+        ctx.lineTo(Math.cos(i * Math.PI / 3) * size / 3, Math.sin(i * Math.PI / 3) * size / 3);
         ctx.stroke();
     }
-    
+
     // Pearl center
     ctx.fillStyle = theme.pearl;
     ctx.beginPath();
-    ctx.arc(0, 0, size/8, 0, Math.PI * 2);
+    ctx.arc(0, 0, size / 8, 0, Math.PI * 2);
     ctx.fill();
 }
 
 function drawGoldenStar(powerUp, theme) {
     const size = powerUp.width;
-    
+
     ctx.fillStyle = theme.body;
-    drawStar(0, 0, size/3);
-    
+    drawStar(0, 0, size / 3);
+
     // Inner glow
     ctx.fillStyle = theme.glow;
-    drawStar(0, 0, size/5);
+    drawStar(0, 0, size / 5);
 }
 
 // 🎮 Game Mechanics
@@ -607,20 +607,20 @@ function jump() {
         character.jumpCount++;
         character.rotation = 0;
         character.lastJumpTime = Date.now();
-        
+
         // Reduced jump particles for performance
         for (let i = 0; i < 5; i++) {
             particles.push(createParticle(
-                character.x + character.width/2, 
-                character.y + character.height, 
+                character.x + character.width / 2,
+                character.y + character.height,
                 themes[gameState.theme].character.body,
                 'circle'
             ));
         }
-        
+
         gameStats.totalJumps++;
         saveGameData();
-        
+
         // Play jump sound effect
         playSound('jump');
     }
@@ -631,7 +631,7 @@ function spawnObstacle() {
     if (obstacles.length >= CONFIG.game.maxObstacles) {
         return;
     }
-    
+
     const obstacle = {
         x: canvas.width,
         y: CONFIG.physics.groundY - 60,
@@ -648,7 +648,7 @@ function spawnPowerUp() {
     if (powerUps.length >= CONFIG.game.maxPowerUps) {
         return;
     }
-    
+
     // Spawn power-ups less frequently and more predictably
     if (Math.random() < 0.3) { // 30% chance when called
         const powerUp = {
@@ -668,7 +668,7 @@ function updateCharacter() {
     // Apply gravity
     character.velocityY += CONFIG.physics.gravity;
     character.y += character.velocityY;
-    
+
     // Ground collision
     if (character.y >= CONFIG.physics.groundY - character.height) {
         character.y = CONFIG.physics.groundY - character.height;
@@ -677,13 +677,13 @@ function updateCharacter() {
         character.jumpCount = 0;
         character.rotation = 0;
     }
-    
+
     // Jump rotation animation
     if (character.isJumping) {
         const jumpTime = Date.now() - character.lastJumpTime;
         character.rotation = (jumpTime / 300) * Math.PI * 2;
     }
-    
+
     // Animation frame counter
     character.animationFrame = (character.animationFrame + 1) % 60;
 }
@@ -692,7 +692,7 @@ function updateObstacles() {
     for (let i = obstacles.length - 1; i >= 0; i--) {
         const obstacle = obstacles[i];
         obstacle.x -= obstacle.speed;
-        
+
         // Remove off-screen obstacles
         if (obstacle.x + obstacle.width < 0) {
             obstacles.splice(i, 1);
@@ -700,17 +700,17 @@ function updateObstacles() {
             updateUI();
             continue;
         }
-        
+
         // Enhanced collision detection with margin for better gameplay
         const margin = 5; // Slight margin for more forgiving collision
         if (character.x + margin < obstacle.x + obstacle.width &&
             character.x + character.width - margin > obstacle.x &&
             character.y + margin < obstacle.y + obstacle.height &&
             character.y + character.height - margin > obstacle.y) {
-            
+
             // Game over collision effect
             playSound('collision');
-            
+
             endGame();
             return;
         }
@@ -721,13 +721,13 @@ function updatePowerUps() {
     for (let i = powerUps.length - 1; i >= 0; i--) {
         const powerUp = powerUps[i];
         powerUp.x -= powerUp.speed;
-        
+
         // Remove off-screen power-ups
         if (powerUp.x + powerUp.width < 0) {
             powerUps.splice(i, 1);
             continue;
         }
-        
+
         // Collection detection
         // Enhanced power-up collision (more generous)
         const collectMargin = 10; // Larger collection area
@@ -735,23 +735,23 @@ function updatePowerUps() {
             character.x + collectMargin < powerUp.x + powerUp.width &&
             character.y + character.height - collectMargin > powerUp.y &&
             character.y + collectMargin < powerUp.y + powerUp.height) {
-            
+
             // Collect power-up
             gameState.score += 50;
-            
+
             // Play collect sound effect
             playSound('collect');
-            
+
             // Celebration particles (reduced)
             for (let j = 0; j < 6; j++) {
                 particles.push(createParticle(
-                    powerUp.x + powerUp.width/2,
-                    powerUp.y + powerUp.height/2,
+                    powerUp.x + powerUp.width / 2,
+                    powerUp.y + powerUp.height / 2,
                     '#FFD700',
                     'star'
                 ));
             }
-            
+
             powerUps.splice(i, 1);
             updateUI();
         }
@@ -770,25 +770,25 @@ function startGame() {
     if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
     }
-    
+
     if (gameState.isGameOver || !gameState.isRunning) {
         resetGame();
     }
-    
+
     gameState.isRunning = true;
     gameState.isPaused = false;
     gameState.isGameOver = false;
     gameStats.totalGames++;
-    
+
     hideOverlay();
     updateUI();
     saveGameData();
-    
+
     // Start background music
     if (gameState.soundEnabled) {
         startBackgroundMusic();
     }
-    
+
     if (!window.gameLoopRunning) {
         gameLoop();
     }
@@ -796,10 +796,10 @@ function startGame() {
 
 function togglePause() {
     if (!gameState.isRunning) return;
-    
+
     gameState.isPaused = !gameState.isPaused;
     updateUI();
-    
+
     if (gameState.isPaused) {
         showOverlay('paused', '⏸️ Game Paused', 'Press Space or click Resume to continue', [
             { text: '▶️ Resume', action: 'togglePause()' },
@@ -825,33 +825,33 @@ function resetGame() {
     character.jumpCount = 0;
     character.rotation = 0;
     character.bounceOffset = 0;
-    
+
     obstacles.length = 0;
     powerUps.length = 0;
     particles.length = 0;
-    
+
     gameState.score = 0;
     gameState.level = 1;
     gameState.speed = 1.0;
     gameState.frameCount = 0;
     obstacleSpawnTimer = 0;
     backgroundOffset = 0;
-    
+
     updateUI();
 }
 
 function endGame() {
     gameState.isRunning = false;
     gameState.isGameOver = true;
-    
+
     // Stop background music
     stopBackgroundMusic();
-    
+
     // Update high score
     if (gameState.score > gameState.highScore) {
         gameState.highScore = gameState.score;
         localStorage.setItem('jumpingGameHighScore', gameState.highScore);
-        
+
         // New high score celebration
         for (let i = 0; i < 50; i++) {
             particles.push(createParticle(
@@ -862,11 +862,11 @@ function endGame() {
             ));
         }
     }
-    
+
     checkAchievements();
     saveGameData();
     updateUI();
-    
+
     showOverlay('gameOver', '💥 Game Over!', `Final Score: ${gameState.score}${gameState.score === gameState.highScore ? ' 🏆 NEW RECORD!' : ''}`, [
         { text: '🔄 Play Again', action: 'restartGame()' },
         { text: '🎯 How to Play', action: 'showInstructions()' },
@@ -884,7 +884,7 @@ function checkAchievements() {
         { id: 'jumper', name: 'Super Jumper', desc: 'Make 100 jumps total', condition: () => gameStats.totalJumps >= 100 },
         { id: 'veteran', name: 'Game Veteran', desc: 'Play 25 games', condition: () => gameStats.totalGames >= 25 }
     ];
-    
+
     achievements.forEach(achievement => {
         if (!gameStats.achievements.has(achievement.id) && achievement.condition()) {
             unlockAchievement(achievement);
@@ -894,10 +894,10 @@ function checkAchievements() {
 
 function unlockAchievement(achievement) {
     gameStats.achievements.add(achievement.id);
-    
+
     // Play achievement sound
     playSound('achievement');
-    
+
     // Achievement notification particles
     for (let i = 0; i < 25; i++) {
         particles.push(createParticle(
@@ -907,10 +907,10 @@ function unlockAchievement(achievement) {
             'star'
         ));
     }
-    
+
     // Show achievement notification
     showAchievementNotification(achievement);
-    
+
     saveGameData();
     updateAchievementsDisplay();
 }
@@ -933,7 +933,7 @@ function showAchievementNotification(achievement) {
         transition: transform 0.3s ease;
         max-width: 300px;
     `;
-    
+
     notification.innerHTML = `
         <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="font-size: 1.5rem;">${achievement.icon}</div>
@@ -943,14 +943,14 @@ function showAchievementNotification(achievement) {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Animate in
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
-    
+
     // Remove after 4 seconds
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
@@ -966,10 +966,10 @@ function setTheme(themeName) {
         console.warn(`Theme ${themeName} not found, defaulting to forest`);
         themeName = 'forest';
     }
-    
+
     gameState.theme = themeName;
     localStorage.setItem('jumpingGameTheme', themeName);
-    
+
     // Update theme buttons
     document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.classList.remove('active');
@@ -978,9 +978,9 @@ function setTheme(themeName) {
     if (activeBtn) {
         activeBtn.classList.add('active');
     }
-    
+
     updateThemeDisplay();
-    
+
     // Update canvas background based on theme
     updateCanvasTheme();
 }
@@ -991,7 +991,7 @@ function updateThemeDisplay() {
     if (container) {
         container.style.background = theme.background.primary;
     }
-    
+
     // Update any theme-specific UI elements
     const canvas = document.getElementById('gameCanvas');
     if (canvas) {
@@ -1029,22 +1029,22 @@ function createTone(frequency, duration, type = 'sine') {
             resolve();
             return;
         }
-        
+
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
         oscillator.type = type;
-        
+
         gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
-        
+
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + duration);
-        
+
         setTimeout(resolve, duration * 1000);
     });
 }
@@ -1052,7 +1052,7 @@ function createTone(frequency, duration, type = 'sine') {
 // Background music using oscillators
 async function startBackgroundMusic() {
     if (!gameState.soundEnabled || backgroundMusic) return;
-    
+
     const playMelody = async () => {
         const notes = [
             { freq: 261.63, duration: 0.5 }, // C4
@@ -1064,19 +1064,19 @@ async function startBackgroundMusic() {
             { freq: 493.88, duration: 0.5 }, // B4
             { freq: 523.25, duration: 1.0 }  // C5
         ];
-        
+
         for (const note of notes) {
             if (!gameState.soundEnabled) break;
             await createTone(note.freq, note.duration, 'triangle');
             await new Promise(resolve => setTimeout(resolve, 100));
         }
-        
+
         // Loop the melody
         if (gameState.soundEnabled && gameState.isRunning) {
             setTimeout(playMelody, 2000);
         }
     };
-    
+
     backgroundMusic = playMelody();
 }
 
@@ -1087,15 +1087,15 @@ function stopBackgroundMusic() {
 // Enhanced sound effects with visual feedback
 async function playSound(type) {
     if (!gameState.soundEnabled) return;
-    
+
     // Create visual feedback
     const canvas = document.getElementById('gameCanvas');
-    
-    switch(type) {
+
+    switch (type) {
         case 'jump':
             // Play jump sound (quick upward tone)
             createTone(440, 0.1, 'square');
-            
+
             // Visual effect
             if (canvas) {
                 for (let i = 0; i < 3; i++) {
@@ -1108,13 +1108,13 @@ async function playSound(type) {
                 }
             }
             break;
-            
+
         case 'collect':
             // Play collect sound (ascending chime)
             createTone(523.25, 0.1, 'sine');
             setTimeout(() => createTone(659.25, 0.1, 'sine'), 100);
             setTimeout(() => createTone(783.99, 0.2, 'sine'), 200);
-            
+
             // Visual effect
             if (canvas) {
                 canvas.style.filter = 'hue-rotate(45deg) brightness(1.3)';
@@ -1123,11 +1123,11 @@ async function playSound(type) {
                 }, 150);
             }
             break;
-            
+
         case 'collision':
             // Play collision sound (harsh low tone)
             createTone(130.81, 0.3, 'sawtooth');
-            
+
             // Visual effect
             if (canvas) {
                 canvas.style.filter = 'hue-rotate(0deg) brightness(1.5) saturate(2)';
@@ -1136,7 +1136,7 @@ async function playSound(type) {
                 }, 200);
             }
             break;
-            
+
         case 'achievement':
             // Play achievement sound (victory fanfare)
             const fanfare = [
@@ -1145,9 +1145,9 @@ async function playSound(type) {
                 { freq: 392.00, duration: 0.2 },
                 { freq: 523.25, duration: 0.4 }
             ];
-            
+
             for (let i = 0; i < fanfare.length; i++) {
-    setTimeout(() => {
+                setTimeout(() => {
                     createTone(fanfare[i].freq, fanfare[i].duration, 'triangle');
                 }, i * 150);
             }
@@ -1158,7 +1158,7 @@ async function playSound(type) {
 function toggleMute() {
     gameState.soundEnabled = !gameState.soundEnabled;
     localStorage.setItem('jumpingGameSound', gameState.soundEnabled);
-    
+
     const btn = document.getElementById('muteBtn');
     if (btn) {
         const icon = btn.querySelector('i');
@@ -1167,10 +1167,10 @@ function toggleMute() {
         }
         btn.title = gameState.soundEnabled ? 'Mute Sound' : 'Unmute Sound';
     }
-    
+
     // Play a test sound effect
     playSound('jump');
-    
+
     // Show feedback notification
     showNotification(gameState.soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF');
 }
@@ -1191,15 +1191,15 @@ function showNotification(message) {
         transform: translateX(100%);
         transition: transform 0.3s ease;
     `;
-    
+
     notification.textContent = message;
     document.body.appendChild(notification);
-    
+
     // Animate in
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
-    
+
     // Remove after 2 seconds
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
@@ -1230,12 +1230,12 @@ function updateUI() {
         gameLevel: document.getElementById('gameLevel'),
         speedDisplay: document.getElementById('speedDisplay')
     };
-    
+
     if (elements.currentScore) elements.currentScore.textContent = gameState.score;
     if (elements.highScore) elements.highScore.textContent = gameState.highScore;
     if (elements.gameLevel) elements.gameLevel.textContent = gameState.level;
     if (elements.speedDisplay) elements.speedDisplay.textContent = gameState.speed.toFixed(1) + 'x';
-    
+
     // Update pause button
     const pauseBtn = document.getElementById('pauseBtn');
     if (pauseBtn) {
@@ -1245,7 +1245,7 @@ function updateUI() {
         }
         pauseBtn.title = gameState.isPaused ? 'Resume Game' : 'Pause Game';
     }
-    
+
     updateStatisticsDisplay();
 }
 
@@ -1256,7 +1256,7 @@ function updateStatisticsDisplay() {
         gamesPlayed: document.getElementById('gamesPlayed'),
         averageScore: document.getElementById('averageScore')
     };
-    
+
     if (elements.totalJumps) elements.totalJumps.textContent = gameStats.totalJumps;
     if (elements.obstaclesCleared) elements.obstaclesCleared.textContent = gameStats.totalObstacles;
     if (elements.gamesPlayed) elements.gamesPlayed.textContent = gameStats.totalGames;
@@ -1272,7 +1272,7 @@ function updateAchievementsDisplay() {
     if (!achievementsContainer) {
         return; // Achievement container not ready yet
     }
-    
+
     const achievements = [
         { id: 'first_jump', name: 'First Jump', desc: 'Make your first jump', icon: '🦘' },
         { id: 'century', name: 'Century', desc: 'Reach 100 points', icon: '⭐' },
@@ -1281,7 +1281,7 @@ function updateAchievementsDisplay() {
         { id: 'jumper', name: 'Super Jumper', desc: 'Make 100 jumps total', icon: '📈' },
         { id: 'veteran', name: 'Game Veteran', desc: 'Play 25 games', icon: '🏆' }
     ];
-    
+
     achievementsContainer.innerHTML = achievements.map(achievement => {
         const unlocked = gameStats.achievements.has(achievement.id);
         return `
@@ -1303,10 +1303,10 @@ function updateAchievementsDisplay() {
 function showOverlay(type, title, message, buttons = []) {
     const overlay = document.getElementById('gameOverlay');
     if (!overlay) return;
-    
+
     const overlayContent = overlay.querySelector('.overlay-content');
     if (!overlayContent) return;
-    
+
     overlayContent.innerHTML = `
         <div class="overlay-icon">${type === 'gameOver' ? '💥' : type === 'paused' ? '⏸️' : '🎮'}</div>
         <h2>${title}</h2>
@@ -1315,7 +1315,7 @@ function showOverlay(type, title, message, buttons = []) {
             ${buttons.map(btn => `<button class="btn btn-primary" onclick="${btn.action}">${btn.text}</button>`).join('')}
         </div>
     `;
-    
+
     overlay.style.display = 'flex';
 }
 
@@ -1330,7 +1330,7 @@ function showStartScreen() {
     gameState.isRunning = false;
     gameState.isPaused = false;
     gameState.isGameOver = true;
-    
+
     const overlay = document.getElementById('gameOverlay');
     if (overlay) {
         overlay.style.display = 'flex';
@@ -1353,7 +1353,7 @@ function showInstructions() {
     if (!overlay) {
         return; // Overlay not ready
     }
-    
+
     overlay.innerHTML = `
         <div class="overlay-content">
             <div class="overlay-icon">📖</div>
@@ -1413,7 +1413,7 @@ function showInstructions() {
             </div>
         </div>
     `;
-    
+
     overlay.style.display = 'flex';
 }
 
@@ -1432,7 +1432,7 @@ function loadGameData() {
     gameState.highScore = parseInt(localStorage.getItem('jumpingGameHighScore')) || 0;
     gameState.theme = localStorage.getItem('jumpingGameTheme') || 'forest';
     gameState.soundEnabled = localStorage.getItem('jumpingGameSound') !== 'false';
-    
+
     gameStats.totalJumps = parseInt(localStorage.getItem('totalJumps')) || 0;
     gameStats.totalObstacles = parseInt(localStorage.getItem('totalObstacles')) || 0;
     gameStats.totalGames = parseInt(localStorage.getItem('totalGames')) || 0;
@@ -1446,61 +1446,61 @@ function gameLoop() {
     let lastTime = 0;
     const targetFPS = 60;
     const frameInterval = 1000 / targetFPS;
-    
+
     function animate(currentTime) {
         try {
             const deltaTime = currentTime - lastTime;
-            
+
             if (deltaTime >= frameInterval) {
-            if (gameState.isRunning && !gameState.isPaused && !gameState.isGameOver) {
-                gameState.frameCount++;
-                backgroundOffset += gameState.speed;
-                
-                // Spawn obstacles (less frequently to reduce lag)
-                obstacleSpawnTimer++;
-                if (obstacleSpawnTimer >= CONFIG.game.obstacleSpawnRate / gameState.speed) {
-                    spawnObstacle();
-                    obstacleSpawnTimer = 0;
+                if (gameState.isRunning && !gameState.isPaused && !gameState.isGameOver) {
+                    gameState.frameCount++;
+                    backgroundOffset += gameState.speed;
+
+                    // Spawn obstacles (less frequently to reduce lag)
+                    obstacleSpawnTimer++;
+                    if (obstacleSpawnTimer >= CONFIG.game.obstacleSpawnRate / gameState.speed) {
+                        spawnObstacle();
+                        obstacleSpawnTimer = 0;
+                    }
+
+                    // Spawn power-ups less frequently
+                    if (gameState.frameCount % 180 === 0) { // Every 3 seconds at 60fps
+                        spawnPowerUp();
+                    }
+
+                    // Update game objects
+                    updateCharacter();
+                    updateObstacles();
+                    updatePowerUps();
+                    updateGameDifficulty();
+
+                    // Update particles less frequently
+                    if (gameState.frameCount % 2 === 0) {
+                        updateParticles();
+                    }
                 }
-                
-                // Spawn power-ups less frequently
-                if (gameState.frameCount % 180 === 0) { // Every 3 seconds at 60fps
-                    spawnPowerUp();
-                }
-                
-                // Update game objects
-                updateCharacter();
-                updateObstacles();
-                updatePowerUps();
-                updateGameDifficulty();
-                
-                // Update particles less frequently
+
+                // Draw everything
+                drawBackground();
+                drawObstacles();
+                drawPowerUps();
+                drawCharacter();
+
+                // Draw particles less frequently
                 if (gameState.frameCount % 2 === 0) {
-                    updateParticles();
+                    drawParticles();
                 }
+
+                lastTime = currentTime;
             }
-            
-            // Draw everything
-            drawBackground();
-            drawObstacles();
-            drawPowerUps();
-            drawCharacter();
-            
-            // Draw particles less frequently
-            if (gameState.frameCount % 2 === 0) {
-                drawParticles();
-            }
-            
-            lastTime = currentTime;
-        }
-        
+
             requestAnimationFrame(animate);
         } catch (error) {
             console.error('Game loop error:', error);
             window.gameLoopRunning = false;
         }
     }
-    
+
     animate(0);
 }
 
@@ -1518,7 +1518,7 @@ function setupEventListeners() {
                 startGame();
             }
         }
-        
+
         if (e.code === 'KeyP') {
             e.preventDefault();
             if (gameState.isRunning) {
@@ -1526,24 +1526,24 @@ function setupEventListeners() {
                 showNotification(gameState.isPaused ? '⏸️ Game Paused' : '▶️ Game Resumed');
             }
         }
-        
+
         if (e.code === 'KeyR') {
             e.preventDefault();
             restartGame();
             showNotification('🔄 Game Restarted');
         }
-        
+
         if (e.code === 'KeyM') {
             e.preventDefault();
             toggleMute();
         }
-        
+
         if (e.code === 'KeyF') {
             e.preventDefault();
             toggleFullscreen();
             showNotification('🖥️ Fullscreen Toggled');
         }
-        
+
         if (e.code === 'Escape') {
             e.preventDefault();
             if (gameState.isRunning && !gameState.isPaused) {
@@ -1555,7 +1555,7 @@ function setupEventListeners() {
             }
         }
     });
-    
+
     // Touch/Click controls
     canvas.addEventListener('click', () => {
         if (gameState.isRunning && !gameState.isPaused && !gameState.isGameOver) {
@@ -1564,7 +1564,7 @@ function setupEventListeners() {
             startGame();
         }
     });
-    
+
     // Mobile touch prevention of scrolling
     canvas.addEventListener('touchstart', (e) => {
         e.preventDefault();
@@ -1574,7 +1574,7 @@ function setupEventListeners() {
             startGame();
         }
     });
-    
+
     // Theme buttons
     document.querySelectorAll('.theme-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1591,7 +1591,7 @@ function initGame() {
         updateAchievementsDisplay();
         updateThemeDisplay();
         setTheme(gameState.theme);
-        
+
         // Set initial button states
         const muteBtn = document.getElementById('muteBtn');
         if (muteBtn) {
@@ -1601,17 +1601,17 @@ function initGame() {
             }
             muteBtn.title = gameState.soundEnabled ? 'Mute Sound' : 'Unmute Sound';
         }
-        
+
         setupEventListeners();
-        
+
         // Show start screen
         setTimeout(() => {
             showStartScreen();
         }, 300);
-        
+
         // Start the game loop
         gameLoop();
-        
+
     } catch (error) {
         console.error("Error initializing game:", error);
     }
