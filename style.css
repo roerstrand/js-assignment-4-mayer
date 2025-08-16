@@ -1,5 +1,9 @@
 /* 🎮 Ultimate Kids' Jumping Adventure - Gaming Design System */
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     /* 🌈 Kid-Friendly Gaming Colors */
     --primary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
@@ -9,12 +13,12 @@
     --game-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --neon-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
     --rainbow-gradient: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
-    
+
     /* 🎨 Gaming Theme Colors */
     --forest-gradient: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #228B22 100%);
     --ocean-gradient: linear-gradient(135deg, #87CEEB 0%, #4682B4 50%, #191970 100%);
     --space-gradient: linear-gradient(135deg, #000000 0%, #191970 50%, #4B0082 100%);
-    
+
     /* 📝 Typography */
     --text-primary: #2c3e50;
     --text-light: #ecf0f1;
@@ -22,7 +26,7 @@
     --surface-light: #ffffff;
     --surface-dark: #2c3e50;
     --surface-gaming: rgba(255, 255, 255, 0.1);
-    
+
     /* ✨ Effects */
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.25);
@@ -58,7 +62,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
+    background:
         radial-gradient(circle at 20% 20%, rgba(255, 107, 107, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(75, 172, 254, 0.05) 0%, transparent 50%);
     pointer-events: none;
@@ -75,8 +79,15 @@ body::before {
 }
 
 @keyframes containerFadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Optimized Gaming Header */
@@ -243,16 +254,7 @@ body::before {
     color: #2c3e50;
 }
 
-.overlay-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: auto;
-    padding-top: 1rem;
-    flex-shrink: 0;
-}
-
+/* ONE definitive button style */
 .btn {
     padding: 0.75rem 1.5rem;
     border: none;
@@ -262,50 +264,55 @@ body::before {
     transition: var(--transition-smooth);
     font-size: 1rem;
     text-decoration: none;
-}
-
-.btn-primary {
-    background: var(--primary-gradient);
-    color: white;
-}
-
-.btn-secondary {
-    background: var(--secondary-gradient);
-    color: white;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.btn {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: var(--border-radius-lg);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .btn-primary {
-    background: var(--success-gradient);
-    color: white;
+    background: var(--primary-gradient);
+    color: #fff;
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: var(--secondary-gradient, linear-gradient(135deg, #6bcf7f 0%, #4facfe 100%));
+    /* fallback */
+    color: #fff;
+    border: none;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
+.btn:hover,
+.btn:focus {
+    transform: translateY(-0.05rem);
     box-shadow: var(--shadow-lg);
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(20%);
+}
+
+/* Overlay row: last button to the right */
+.overlay-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.overlay-buttons .btn:last-child {
+    margin-left: auto;
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Power-ups */
@@ -402,7 +409,7 @@ body::before {
     background: var(--primary-gradient);
     color: white;
     transform: translateY(-5px) scale(1.05);
-    box-shadow: 
+    box-shadow:
         0 10px 25px rgba(255, 107, 107, 0.4),
         0 0 20px rgba(255, 107, 107, 0.3);
     border-color: rgba(255, 255, 255, 0.6);
@@ -552,28 +559,26 @@ body::before {
     border-radius: 4px;
 }
 
-.theme-preview.default { background: linear-gradient(45deg, #87CEEB, #98FB98); }
-.theme-preview.neon { background: linear-gradient(45deg, #ff006e, #8338ec); }
-.theme-preview.retro { background: linear-gradient(45deg, #ff9a00, #ff006e); }
-.theme-preview.space { background: linear-gradient(45deg, #0f0f23, #4c1d95); }
-
-/* Footer */
-.game-footer {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    padding: 2rem;
-    margin-top: auto;
+.theme-preview.default {
+    background: linear-gradient(45deg, #87CEEB, #98FB98);
 }
 
-.footer-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
+.theme-preview.neon {
+    background: linear-gradient(45deg, #ff006e, #8338ec);
 }
 
-.controls-guide h4, .game-info h4 {
+.theme-preview.retro {
+    background: linear-gradient(45deg, #ff9a00, #ff006e);
+}
+
+.theme-preview.space {
+    background: linear-gradient(45deg, #0f0f23, #4c1d95);
+}
+
+
+
+.controls-guide h4,
+.game-info h4 {
     margin-bottom: 1rem;
     color: #2c3e50;
     font-weight: 700;
@@ -693,12 +698,14 @@ kbd {
     font-size: 1.2rem;
 }
 
-.controls-demo, .powerups-demo {
+.controls-demo,
+.powerups-demo {
     display: grid;
     gap: 1rem;
 }
 
-.control-demo, .powerup-demo {
+.control-demo,
+.powerup-demo {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -734,12 +741,14 @@ kbd {
     margin-bottom: 0.25rem;
 }
 
-.tips-list, .features-list {
+.tips-list,
+.features-list {
     list-style: none;
     padding: 0;
 }
 
-.tips-list li, .features-list li {
+.tips-list li,
+.features-list li {
     padding: 0.75rem;
     background: rgba(0, 0, 0, 0.05);
     border-radius: 8px;
@@ -749,8 +758,15 @@ kbd {
 
 /* Animations */
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 @keyframes achievementUnlock {
@@ -758,9 +774,11 @@ kbd {
         transform: scale(0.8);
         opacity: 0;
     }
+
     50% {
         transform: scale(1.1);
     }
+
     100% {
         transform: scale(1);
         opacity: 1;
@@ -768,8 +786,15 @@ kbd {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 /* Responsive Design */
@@ -777,18 +802,18 @@ kbd {
     .game-main {
         grid-template-columns: 1fr;
     }
-    
+
     .footer-content {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .game-header {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
     }
-    
+
     .game-stats {
         flex-wrap: wrap;
         justify-content: center;
@@ -799,19 +824,20 @@ kbd {
     .header-content h1 {
         font-size: 2rem;
     }
-    
-    .game-main, .footer-content {
+
+    .game-main,
+    .footer-content {
         padding: 1rem;
     }
-    
+
     .controls-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .modal-body {
         padding: 1rem;
     }
-    
+
     .powerups-demo {
         grid-template-columns: 1fr;
     }
@@ -843,3 +869,139 @@ body.theme-space #gameCanvas {
     background: linear-gradient(to bottom, #000000 0%, #1a1a2e 100%);
     box-shadow: 0 0 50px rgba(76, 29, 149, 0.8);
 }
+
+/* Footer meta */
+
+/* Footer */
+.game-footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+footer {
+    padding-top: 1.25rem;
+
+    .back-to-top,
+    .legal {
+        text-align: center;
+        margin: 0;
+    }
+
+    .back-to-top {
+        margin-top: 0.75rem;
+    }
+
+    .legal {
+        margin-top: 0.35rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary, #666);
+    }
+
+    .back-to-top a {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        border-radius: 0.3rem;
+    }
+
+    .back-to-top a:hover,
+    .back-to-top a:focus {
+        text-decoration: underline;
+    }
+
+    .back-to-top a:focus-visible {
+        outline: 0.15rem solid var(--primary-color);
+        outline-offset: 0.15rem;
+    }
+
+}
+
+/* --- START: Footer cleanup (scoped, no duplicates) --- */
+
+/* Container (keep your existing .game-footer & .footer-content — these are fine) */
+.game-footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 48rem) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Divider above “Back to top” / legal */
+.footer-meta-divider {
+    height: 0.075rem;
+    background: rgba(0, 0, 0, 0.08);
+    /* simple, cross-browser */
+    margin: 1.25rem auto 0;
+    max-width: 40rem;
+    border-radius: 10rem;
+}
+
+/* Meta text */
+.game-footer .back-to-top,
+.game-footer .legal {
+    margin: 0;
+    text-align: center;
+}
+
+.game-footer .back-to-top {
+    margin-top: 0.75rem;
+}
+
+.game-footer .legal {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #666);
+}
+
+/* Make “Back to top” a neat pill/chip with reliable color */
+.game-footer .back-to-top a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 9999rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: var(--primary-color, #007aff);
+    /* fallback if --primary-color is missing */
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.game-footer .back-to-top a:hover,
+.game-footer .back-to-top a:focus {
+    text-decoration: none;
+    filter: brightness(1.08);
+}
+
+.game-footer .back-to-top a:focus-visible {
+    outline: 0.15rem solid var(--primary-color, #007aff);
+    outline-offset: 0.15rem;
+}
+
+/* --- END: Footer cleanup --- */
