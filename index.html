@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦘 Ultimate Jumping Adventure Pro</title>
     <link rel="stylesheet" href="./style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="./script.js" defer></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
     <div class="game-container">
-        <header class="game-header">
+        <header id="top" class="game-header">
             <div class="header-content">
                 <h1 class="game-title">
                     <i class="fas fa-rocket"></i>
@@ -21,7 +24,7 @@
                 </h1>
                 <p class="game-subtitle">Physics-Based Infinite Runner with Advanced Graphics</p>
             </div>
-            
+
             <div class="game-stats">
                 <div class="stat-item">
                     <div class="stat-value" id="currentScore">0</div>
@@ -46,11 +49,11 @@
             <div class="game-viewport">
                 <section id="game" role="application" aria-label="Jumping Game">
                     <canvas id="gameCanvas" width="800" height="400" aria-label="Game area">
-        <div id="character"></div>
-        <div id="obstacle"></div>
+                        <div id="character"></div>
+                        <div id="obstacle"></div>
                         Your browser does not support the HTML5 canvas element.
                     </canvas>
-                    
+
                     <div class="game-overlay" id="gameOverlay">
                         <div class="overlay-content">
                             <h2 id="overlayTitle">Ready to Jump?</h2>
@@ -67,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="power-ups" id="powerUps">
                         <div class="power-up active" data-type="shield">
                             <i class="fas fa-shield-alt"></i>
@@ -214,7 +217,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="game-info">
                     <h4>Physics Engine Features</h4>
                     <ul>
@@ -227,6 +230,11 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="footer-meta-divider"></div>
+            <p class="back-to-top"><a href="#top" aria-label="Back to top">Back to top ↑</a></p>
+            <p class="legal">© 2025 Robin Erik Strandberg &amp; Abdulrahman Alfaiadi. All rights reserved.</p>
+
         </footer>
     </div>
 
@@ -241,7 +249,8 @@
             <div class="modal-body">
                 <div class="instruction-section">
                     <h3>🎯 Objective</h3>
-                    <p>Jump over obstacles to score points and survive as long as possible. The game gets faster and more challenging as your score increases!</p>
+                    <p>Jump over obstacles to score points and survive as long as possible. The game gets faster and
+                        more challenging as your score increases!</p>
                 </div>
 
                 <div class="instruction-section">
@@ -309,7 +318,6 @@
         </div>
     </div>
 
-    <script src="./script.js"></script>
 </body>
 
 </html>

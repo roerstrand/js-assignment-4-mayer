@@ -6,6 +6,17 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 400;
 
+// 🔖 Single source of truth for achievements (icon included)
+const achievements = [
+    { id: 'first_jump', name: 'First Jump', desc: 'Make your first jump', icon: '🦘', condition: () => gameStats.totalJumps >= 1 },
+    { id: 'century', name: 'Century', desc: 'Reach 100 points', icon: '⭐', condition: () => gameState.score >= 100 },
+    { id: 'speed_demon', name: 'Speed Demon', desc: 'Reach level 5', icon: '🔥', condition: () => gameState.level >= 5 },
+    { id: 'perfect_run', name: 'Perfect Run', desc: 'Score 500 without power-ups', icon: '💎', condition: () => gameState.score >= 500 },
+    { id: 'jumper', name: 'Super Jumper', desc: 'Make 100 jumps total', icon: '📈', condition: () => gameStats.totalJumps >= 100 },
+    { id: 'veteran', name: 'Game Veteran', desc: 'Play 25 games', icon: '🏆', condition: () => gameStats.totalGames >= 25 },
+];
+
+
 // 🎯 Game State Management
 let gameState = {
     score: 0,
@@ -627,10 +638,7 @@ function jump() {
 }
 
 function spawnObstacle() {
-    // Performance: Limit number of obstacles
-    if (obstacles.length >= CONFIG.game.maxObstacles) {
-        return;
-    }
+    if (obstacles.length >= CONFIG.game.maxObstacles) return;
 
     const obstacle = {
         x: canvas.width,
@@ -639,17 +647,16 @@ function spawnObstacle() {
         height: 60 + Math.random() * 40,
         speed: CONFIG.game.baseSpeed * gameState.speed
     };
+
     obstacles.push(obstacle);
-    gameStats.totalObstacles++;
 }
 
+// ✅ Put this at top-level (same level as spawnObstacle / updatePowerUps)
 function spawnPowerUp() {
-    // Performance: Limit number of power-ups
-    if (powerUps.length >= CONFIG.game.maxPowerUps) {
-        return;
-    }
+    // Respect max count
+    if (powerUps.length >= CONFIG.game.maxPowerUps) return;
 
-    // Spawn power-ups less frequently and more predictably
+    // Only sometimes spawn (keeps it light)
     if (Math.random() < 0.3) { // 30% chance when called
         const powerUp = {
             x: canvas.width,
@@ -661,6 +668,37 @@ function spawnPowerUp() {
         };
         powerUps.push(powerUp);
         gameState.lastPowerUp = Date.now();
+    }
+}
+
+function updateObstacles() {
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obstacle = obstacles[i];
+        obstacle.x -= obstacle.speed;
+
+        // ✅ cleared by player
+        if (obstacle.x + obstacle.width < 0) {
+            obstacles.splice(i, 1);
+            gameState.score += 10;
+
+            gameStats.totalObstacles++;             // increment here
+            saveGameData();
+            updateUI();
+
+            continue;
+        }
+
+        const margin = 5;
+        if (
+            character.x + margin < obstacle.x + obstacle.width &&
+            character.x + character.width - margin > obstacle.x &&
+            character.y + margin < obstacle.y + obstacle.height &&
+            character.y + character.height - margin > obstacle.y
+        ) {
+            playSound('collision');
+            endGame();
+            return;
+        }
     }
 }
 
@@ -693,7 +731,15 @@ function updateObstacles() {
         const obstacle = obstacles[i];
         obstacle.x -= obstacle.speed;
 
-        // Remove off-screen obstacles
+        // ✅ Count when the player has fully passed the obstacle (right edge)
+        if (!obstacle._counted && (character.x > obstacle.x + obstacle.width)) {
+            obstacle._counted = true;                // prevent double count
+            gameStats.totalObstacles++;
+            saveGameData();
+            updateUI();
+        }
+
+        // Remove off-screen obstacles (unchanged)
         if (obstacle.x + obstacle.width < 0) {
             obstacles.splice(i, 1);
             gameState.score += 10;
@@ -701,21 +747,19 @@ function updateObstacles() {
             continue;
         }
 
-        // Enhanced collision detection with margin for better gameplay
-        const margin = 5; // Slight margin for more forgiving collision
+        // Collision check (unchanged)
+        const margin = 5;
         if (character.x + margin < obstacle.x + obstacle.width &&
             character.x + character.width - margin > obstacle.x &&
             character.y + margin < obstacle.y + obstacle.height &&
             character.y + character.height - margin > obstacle.y) {
-
-            // Game over collision effect
             playSound('collision');
-
             endGame();
             return;
         }
     }
 }
+
 
 function updatePowerUps() {
     for (let i = powerUps.length - 1; i >= 0; i--) {
@@ -765,8 +809,12 @@ function updateGameDifficulty() {
 }
 
 // 🎮 Game Control Functions (ALL FUNCTIONAL!)
+let countedThisRun = false;
+
 function startGame() {
-    // Resume audio context if needed
+    // reset flag for new run
+    countedThisRun = false;
+
     if (audioContext && audioContext.state === 'suspended') {
         audioContext.resume();
     }
@@ -778,13 +826,11 @@ function startGame() {
     gameState.isRunning = true;
     gameState.isPaused = false;
     gameState.isGameOver = false;
-    gameStats.totalGames++;
 
     hideOverlay();
     updateUI();
     saveGameData();
 
-    // Start background music
     if (gameState.soundEnabled) {
         startBackgroundMusic();
     }
@@ -793,6 +839,7 @@ function startGame() {
         gameLoop();
     }
 }
+
 
 function togglePause() {
     if (!gameState.isRunning) return;
@@ -844,53 +891,66 @@ function endGame() {
     gameState.isRunning = false;
     gameState.isGameOver = true;
 
-    // Stop background music
-    stopBackgroundMusic();
+    // ✅ Count a finished run here (once per run)
+    if (!countedThisRun) {
+        countedThisRun = true;
+        gameStats.totalGames++;
+        saveGameData();
+    }
 
-    // Update high score
+    // Stop music, check highscore, etc. (your existing code)
+    stopBackgroundMusic();
     if (gameState.score > gameState.highScore) {
         gameState.highScore = gameState.score;
         localStorage.setItem('jumpingGameHighScore', gameState.highScore);
-
-        // New high score celebration
         for (let i = 0; i < 50; i++) {
-            particles.push(createParticle(
-                canvas.width / 2,
-                canvas.height / 2,
-                '#FFD700',
-                'star'
-            ));
+            particles.push(createParticle(canvas.width / 2, canvas.height / 2, '#FFD700', 'star'));
         }
     }
 
     checkAchievements();
-    saveGameData();
     updateUI();
 
-    showOverlay('gameOver', '💥 Game Over!', `Final Score: ${gameState.score}${gameState.score === gameState.highScore ? ' 🏆 NEW RECORD!' : ''}`, [
-        { text: '🔄 Play Again', action: 'restartGame()' },
-        { text: '🎯 How to Play', action: 'showInstructions()' },
-        { text: '🏠 Main Menu', action: 'showStartScreen()' }
-    ]);
+    showOverlay(
+        'gameOver',
+        '💥 Game Over!',
+        `Final Score: ${gameState.score}${gameState.score === gameState.highScore ? ' 🏆 NEW RECORD!' : ''}`,
+        [
+            { text: '🔄 Play Again', action: 'restartGame()' },
+            { text: '🎯 How to Play', action: 'showInstructions()' },
+            { text: '🏠 Main Menu', action: 'showStartScreen()' }
+        ]
+    );
 }
+
+checkAchievements();
+saveGameData();
+updateUI();
+
+showOverlay('gameOver', '💥 Game Over!', `Final Score: ${gameState.score}${gameState.score === gameState.highScore ? ' 🏆 NEW RECORD!' : ''}`, [
+    { text: '🔄 Play Again', action: 'restartGame()' },
+    { text: '🎯 How to Play', action: 'showInstructions()' },
+    { text: '🏠 Main Menu', action: 'showStartScreen()' }
+]);
 
 // 🏆 Achievement System
 function checkAchievements() {
     const achievements = [
-        { id: 'first_jump', name: 'First Jump', desc: 'Make your first jump', condition: () => gameStats.totalJumps >= 1 },
-        { id: 'century', name: 'Century', desc: 'Reach 100 points', condition: () => gameState.score >= 100 },
-        { id: 'speed_demon', name: 'Speed Demon', desc: 'Reach level 5', condition: () => gameState.level >= 5 },
-        { id: 'perfect_run', name: 'Perfect Run', desc: 'Score 500 without power-ups', condition: () => gameState.score >= 500 },
-        { id: 'jumper', name: 'Super Jumper', desc: 'Make 100 jumps total', condition: () => gameStats.totalJumps >= 100 },
-        { id: 'veteran', name: 'Game Veteran', desc: 'Play 25 games', condition: () => gameStats.totalGames >= 25 }
+        { id: 'first_jump', name: 'First Jump', desc: 'Make your first jump', icon: '🦘', condition: () => gameStats.totalJumps >= 1 },
+        { id: 'century', name: 'Century', desc: 'Reach 100 points', icon: '⭐', condition: () => gameState.score >= 100 },
+        { id: 'speed_demon', name: 'Speed Demon', desc: 'Reach level 5', icon: '🔥', condition: () => gameState.level >= 5 },
+        { id: 'perfect_run', name: 'Perfect Run', desc: 'Score 500 without power-ups', icon: '💎', condition: () => gameState.score >= 500 },
+        { id: 'jumper', name: 'Super Jumper', desc: 'Make 100 jumps total', icon: '📈', condition: () => gameStats.totalJumps >= 100 },
+        { id: 'veteran', name: 'Game Veteran', desc: 'Play 25 games', icon: '🏆', condition: () => gameStats.totalGames >= 25 }
     ];
 
-    achievements.forEach(achievement => {
-        if (!gameStats.achievements.has(achievement.id) && achievement.condition()) {
-            unlockAchievement(achievement);
+    achievements.forEach(a => {
+        if (!gameStats.achievements.has(a.id) && a.condition()) {
+            unlockAchievement(a);
         }
     });
 }
+
 
 function unlockAchievement(achievement) {
     gameStats.achievements.add(achievement.id);
@@ -916,6 +976,7 @@ function unlockAchievement(achievement) {
 }
 
 function showAchievementNotification(achievement) {
+    const icon = achievement.icon || '🏅'; // ✅ fallback
     const notification = document.createElement('div');
     notification.style.cssText = `
         position: fixed;
@@ -935,14 +996,14 @@ function showAchievementNotification(achievement) {
     `;
 
     notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="font-size: 1.5rem;">${achievement.icon}</div>
-            <div>
-                <div style="font-weight: 700;">🏆 Achievement Unlocked!</div>
-                <div style="font-size: 0.85rem; opacity: 0.9;">${achievement.name}</div>
-            </div>
-        </div>
-    `;
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <div style="font-size:1.5rem;">${icon}</div>
+      <div>
+        <div style="font-weight:700;">🏆 Achievement Unlocked!</div>
+        <div style="font-size:0.85rem; opacity:0.9;">${achievement.name}</div>
+      </div>
+    </div>
+  `;
 
     document.body.appendChild(notification);
 
@@ -1021,6 +1082,7 @@ try {
 }
 let backgroundMusic = null;
 let soundEffects = {};
+let musicPlaying = false;  // ✅ new flag
 
 // Create sound effects using oscillators
 function createTone(frequency, duration, type = 'sine') {
@@ -1051,7 +1113,8 @@ function createTone(frequency, duration, type = 'sine') {
 
 // Background music using oscillators
 async function startBackgroundMusic() {
-    if (!gameState.soundEnabled || backgroundMusic) return;
+    if (!gameState.soundEnabled || musicPlaying) return; // already running
+    musicPlaying = true;
 
     const playMelody = async () => {
         const notes = [
@@ -1066,19 +1129,25 @@ async function startBackgroundMusic() {
         ];
 
         for (const note of notes) {
-            if (!gameState.soundEnabled) break;
+            if (!musicPlaying || !gameState.isRunning) return; // stop if flagged
             await createTone(note.freq, note.duration, 'triangle');
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        // Loop the melody
-        if (gameState.soundEnabled && gameState.isRunning) {
+        // loop only if still allowed
+        if (musicPlaying && gameState.isRunning) {
             setTimeout(playMelody, 2000);
         }
     };
 
     backgroundMusic = playMelody();
 }
+
+function stopBackgroundMusic() {
+    musicPlaying = false;  // flag stops loop
+    backgroundMusic = null;
+}
+
 
 function stopBackgroundMusic() {
     backgroundMusic = null;
@@ -1250,21 +1319,29 @@ function updateUI() {
 }
 
 function updateStatisticsDisplay() {
-    const elements = {
+    const getOne = (preferred, fallback) =>
+        document.getElementById(preferred) || document.getElementById(fallback);
+
+    const els = {
         totalJumps: document.getElementById('totalJumps'),
-        obstaclesCleared: document.getElementById('obstaclesCleared'),
-        gamesPlayed: document.getElementById('gamesPlayed'),
+        totalObstacles: getOne('totalObstacles', 'obstaclesCleared'),
+        totalGames: getOne('totalGames', 'gamesPlayed'),
         averageScore: document.getElementById('averageScore')
     };
 
-    if (elements.totalJumps) elements.totalJumps.textContent = gameStats.totalJumps;
-    if (elements.obstaclesCleared) elements.obstaclesCleared.textContent = gameStats.totalObstacles;
-    if (elements.gamesPlayed) elements.gamesPlayed.textContent = gameStats.totalGames;
-    if (elements.averageScore) {
-        const avg = gameStats.totalGames > 0 ? Math.round(gameStats.totalObstacles / gameStats.totalGames) : 0;
-        elements.averageScore.textContent = avg;
+    if (els.totalJumps) els.totalJumps.textContent = gameStats.totalJumps;
+    if (els.totalObstacles) els.totalObstacles.textContent = gameStats.totalObstacles;
+    if (els.totalGames) els.totalGames.textContent = gameStats.totalGames;
+
+    if (els.averageScore) {
+        // if you want average *score*, compute from score; if you want avg obstacles/run, keep as below
+        const avg = gameStats.totalGames > 0
+            ? Math.round(gameStats.totalObstacles / gameStats.totalGames)
+            : 0;
+        els.averageScore.textContent = avg;
     }
 }
+
 
 function updateAchievementsDisplay() {
     // Find achievements container in the sidebar
